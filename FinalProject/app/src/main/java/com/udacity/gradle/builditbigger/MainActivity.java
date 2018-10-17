@@ -57,15 +57,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void tellJoke(View view) {
         Toast.makeText(this, "derp", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, JokeActivity.class);
+
         new EndpointsAsyncTask().execute(new Pair<Context, String>(this, "Manfred"));
-        startActivity(intent);
+
+
 
 
     }
 
-    static class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> {
-        private static MyApi myApiService = null;
+    class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> {
+        private MyApi myApiService = null;
         @SuppressLint("StaticFieldLeak")
         private Context context;
 
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
                         // options for running against local devappserver
                         // - 10.0.2.2 is localhost's IP address in Android emulator
                         // - turn off compression when running against local devappserver
-                        .setRootUrl("http://build-it-bigger-2018.appspot.com:8080/myApi/v1/sayHi")
+                        .setRootUrl("https://build-it-bigger-2018.appspot.com/_ah/api/")
                         .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
                             @Override
                             public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
@@ -101,7 +102,9 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(getApplicationContext(), JokeActivity.class);
+            intent.putExtra("joke", result);
+            startActivity(intent);
         }
     }
 
