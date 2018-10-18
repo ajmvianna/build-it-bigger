@@ -13,6 +13,7 @@ import android.widget.TextView;
 public class JokeActivity extends AppCompatActivity {
 
     TextView tvJokes;
+    String joke = "";
     private static final String TAG_EXTRA = "joke";
 
     @Override
@@ -22,8 +23,10 @@ public class JokeActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         Intent intent = getIntent();
-        String joke = intent.getStringExtra(TAG_EXTRA);
+        if (intent.hasExtra(TAG_EXTRA))
+            joke = intent.getStringExtra(TAG_EXTRA);
 
         initComponents(joke);
 
