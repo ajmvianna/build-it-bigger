@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -26,43 +27,22 @@ import bakingapp.nanodegreeprojects.edu.androidlibrary.JokeActivity;
 
 public class MainActivity extends AppCompatActivity {
 
+    ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        initComponents();
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    private void initComponents() {
+        progressBar = findViewById(R.id.progressBar);
     }
 
     public void tellJoke(View view) {
-        Toast.makeText(this, "derp", Toast.LENGTH_SHORT).show();
-
-        new EndpointsAsyncTask().execute(new Pair<Context, String>(this, "Manfred"));
-
-
-
-
+        new EndpointsAsyncTask().execute(new Pair<Context, String>(this, ""));
     }
 
     class EndpointsAsyncTask extends AsyncTask<Pair<Context, String>, Void, String> {
@@ -71,8 +51,14 @@ public class MainActivity extends AppCompatActivity {
         private Context context;
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
         protected String doInBackground(Pair<Context, String>... params) {
-            if(myApiService == null) {  // Only do this once
+            if (myApiService == null) {  // Only do this once
                 MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),
                         new AndroidJsonFactory(), null)
                         // options for running against local devappserver
@@ -102,9 +88,14 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Intent intent = new Intent(getApplicationContext(), JokeActivity.class);
-            intent.putExtra("joke", result);
-            startActivity(intent);
+            progressBar.setVisibility(View.GONE);
+            if (result != null) {
+                Intent intent = new Intent(getApplicationContext(), JokeActivity.class);
+                intent.putExtra("joke", result);
+                startActivity(intent);
+            } else {
+                Toast.makeText(context, context.getString(R.string.unknown_error), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

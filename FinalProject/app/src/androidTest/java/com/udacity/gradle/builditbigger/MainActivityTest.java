@@ -1,7 +1,6 @@
-package bakingapp.nanodegreeprojects.edu.androidlibrary;
+package com.udacity.gradle.builditbigger;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
+import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import org.junit.Rule;
@@ -14,14 +13,20 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.*;
 
 /**
- * Instrumented test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Do you know sign language? You should learn it, it’s pretty handy.
  */
 @RunWith(AndroidJUnit4.class)
-public class ExampleInstrumentedTest {
+public class MainActivityTest {
+
+    @Rule
+    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
+
+    @Test
+    public void itShowsANicePunInTheScreen() {
+        onView(withId(R.id.btn_TellJoke)).perform(click());
+        onView(withId(R.id.tv_jokes)).check(matches(not(withText(""))));
+    }
 
 }
